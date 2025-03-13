@@ -1,0 +1,108 @@
+import { print } from "io";
+import { random } from "math";
+import { length, split, join } from "string";
+
+class NetworkRequest {
+    url: string;
+    method: string;
+    headers: map<string, string>;
+    
+    fn init(url: string, method: string = "GET") {
+        this.url = url;
+        this.method = method;
+        this.headers = {};
+    }
+    
+    fn add_header(key: string, value: string): void {
+        this.headers[key] = value;
+    }
+    
+    async fn send(): string {
+        // Simulate network delay
+        await sleep(random() * 1000);
+        
+        // Simulate response
+        return "Response from " + this.url;
+    }
+}
+
+class NetworkClient {
+    base_url: string;
+    
+    fn init(base_url: string) {
+        this.base_url = base_url;
+    }
+    
+    async fn get(path: string): string {
+        let request = new NetworkRequest(this.base_url + path);
+        request.add_header("User-Agent", "Speed/1.0");
+        return await request.send();
+    }
+    
+    async fn post(path: string, data: string): string {
+        let request = new NetworkRequest(this.base_url + path, "POST");
+        request.add_header("Content-Type", "application/json");
+        request.add_header("User-Agent", "Speed/1.0");
+        return await request.send();
+    }
+}
+
+async fn fetch_user_data(client: NetworkClient, user_id: int): map<string, any> {
+    let response = await client.get("/users/" + user_id);
+    return parse_json(response);
+}
+
+async fn update_user(client: NetworkClient, user_id: int, data: map<string, any>): map<string, any> {
+    let json_data = stringify_json(data);
+    let response = await client.post("/users/" + user_id, json_data);
+    return parse_json(response);
+}
+
+fn main(): void {
+    let client = new NetworkClient("https://api.example.com");
+    
+    // Create a list of user IDs to process
+    let user_ids = [1, 2, 3, 4, 5];
+    
+    // Process users concurrently
+    let futures = user_ids.map(id => {
+        async fn process_user(id: int): void {
+            // Fetch user data
+            let user_data = await fetch_user_data(client, id);
+            print("Fetched data for user " + id + ": " + user_data);
+            
+            // Update user data
+            user_data["last_seen"] = current_time();
+            let updated_data = await update_user(client, id, user_data);
+            print("Updated data for user " + id + ": " + updated_data);
+        }
+        
+        return process_user(id);
+    });
+    
+    // Wait for all operations to complete
+    await Promise.all(futures);
+    
+    print("All users processed!");
+}
+
+// Utility functions
+fn sleep(ms: int): Promise<void> {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
+
+fn current_time(): int {
+    return Date.now();
+}
+
+fn parse_json(str: string): map<string, any> {
+    // TODO: Implement JSON parsing
+    return {};
+}
+
+fn stringify_json(data: map<string, any>): string {
+    // TODO: Implement JSON stringification
+    return "{}";
+} 

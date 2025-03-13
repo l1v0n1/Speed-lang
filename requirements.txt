@@ -1,0 +1,6 @@
+llvmlite>=0.39.0
+rply>=0.7.8
+pytest>=7.0.0
+black>=22.0.0
+mypy>=0.950
+pytest-cov>=3.0.0 

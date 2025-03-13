@@ -1,0 +1,35 @@
+import { print } from "io";
+import { sin, cos } from "math";
+import { length, concat } from "string";
+
+fn main(): void {
+    // Print a greeting
+    print("Hello, Speed Programming Language!");
+    
+    // Demonstrate math operations
+    let x = 3.14;
+    print("sin(π) = " + sin(x));
+    print("cos(π) = " + cos(x));
+    
+    // Demonstrate string operations
+    let str1 = "Hello";
+    let str2 = "World";
+    let combined = concat(str1, " " + str2);
+    print("Combined string: " + combined);
+    print("Length: " + length(combined));
+    
+    // Demonstrate control flow
+    let number = 42;
+    if number > 40 {
+        print("That's a big number!");
+    } else {
+        print("That's a small number!");
+    }
+    
+    // Demonstrate loops
+    print("Counting down:");
+    while number > 0 {
+        print(number);
+        number = number - 1;
+    }
+} 
